@@ -1,0 +1,1235 @@
+<title>Cotizador Mareqsa</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap">
+
+<style>
+:root {
+  --red:        #C8102E;
+  --red-dark:   #A50D25;
+  --red-faint:  rgba(200,16,46,0.06);
+  --ink:        #1A1A1A;
+  --ink-2:      #5C5C5A;
+  --ink-3:      #9A9A98;
+  --border:     #E2E1DE;
+  --surface:    #FFFFFF;
+  --ground:     #F3F3F1;
+  --stripe:     #F8F8F6;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md:  0 2px 8px rgba(0,0,0,0.08), 0 6px 24px rgba(0,0,0,0.05);
+  --r:          3px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:      #EEEEEC;
+    --ink-2:    #A0A09E;
+    --ink-3:    #6A6A68;
+    --border:   #2C2C2A;
+    --surface:  #1E1E1C;
+    --ground:   #141412;
+    --stripe:   #242422;
+    --shadow-sm:0 1px 3px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+    --shadow-md:0 2px 8px rgba(0,0,0,0.35), 0 6px 24px rgba(0,0,0,0.25);
+    --red-faint: rgba(200,16,46,0.09);
+  }
+}
+:root[data-theme="dark"] {
+  --ink:      #EEEEEC;
+  --ink-2:    #A0A09E;
+  --ink-3:    #6A6A68;
+  --border:   #2C2C2A;
+  --surface:  #1E1E1C;
+  --ground:   #141412;
+  --stripe:   #242422;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-md:0 2px 8px rgba(0,0,0,0.35), 0 6px 24px rgba(0,0,0,0.25);
+  --red-faint: rgba(200,16,46,0.09);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--ground);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 16px 72px;
+}
+
+/* ─── HEADER / MEMBRETE ─── */
+.header {
+  background: #111111;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.header-top {
+  padding: 22px 32px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.header-bar {
+  height: 3px;
+  background: var(--red);
+}
+
+.header-dolly {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  background: #0d0d0d;
+}
+
+/* Fallback gradient shown when external image can't load (CSP in previews) */
+.header-dolly::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #111 0%, #1a1a1a 40%, #0f0f0f 100%);
+  z-index: 0;
+}
+
+.header-dolly img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 55%;
+  display: block;
+  filter: brightness(0.82) contrast(1.05);
+  position: relative;
+  z-index: 1;
+}
+
+.header-dolly img[src=""] ,
+.header-dolly img:not([src]) {
+  display: none;
+}
+
+.header-dolly-label {
+  position: absolute;
+  bottom: 14px;
+  right: 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  z-index: 2;
+}
+
+.logo-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.logo-svg {
+  height: 36px;
+  width: auto;
+}
+
+.logo-tagline {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.38);
+}
+
+.quote-meta {
+  text-align: right;
+}
+
+.meta-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 3px;
+}
+
+.meta-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta-date {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 6px;
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.card-head {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--stripe);
+}
+
+.card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.card-body { padding: 22px 24px; }
+
+/* ─── FORM GRID ─── */
+.fgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+.fgrid .full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.field label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.field input,
+.field textarea,
+.field select {
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 11px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--red);
+  background: var(--surface);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.55;
+}
+
+/* ─── PRODUCTS TABLE ─── */
+.tbl-wrap { overflow-x: auto; }
+
+table.ptbl {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.ptbl thead th {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--stripe);
+  white-space: nowrap;
+}
+
+.ptbl thead th.r { text-align: right; }
+.ptbl thead th.c { text-align: center; }
+
+.ptbl tbody tr td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.ptbl tbody tr:last-child td { border-bottom: none; }
+
+.ptbl tbody tr:nth-child(even) td { background: var(--stripe); }
+
+.ptbl tbody tr:hover td { background: var(--red-faint); }
+
+.ptbl .empty td {
+  text-align: center;
+  padding: 36px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+/* Row controls */
+.sel-product {
+  width: 100%;
+  min-width: 200px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 6px 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sel-product:focus { border-color: var(--red); }
+
+.inp-qty {
+  width: 60px;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 6px 8px;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.inp-qty:focus { border-color: var(--red); background: var(--surface); }
+
+.inp-price {
+  width: 130px;
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 6px 10px;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.inp-price:focus { border-color: var(--red); background: var(--surface); }
+
+.row-total {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.btn-rm {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-3);
+  font-size: 20px;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: var(--r);
+  transition: color 0.13s, background 0.13s;
+}
+
+.btn-rm:hover { color: var(--red); background: var(--red-faint); }
+
+/* Add row */
+.add-row-area {
+  padding: 13px 16px;
+  border-top: 1px dashed var(--border);
+}
+
+.btn-add {
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--r);
+  padding: 7px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 0.13s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-add:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-faint);
+}
+
+/* ─── TOTALS ─── */
+.totals-wrap {
+  padding: 0 24px 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.totals-box {
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 32px;
+  font-size: 13.5px;
+}
+
+.total-row .tl { color: var(--ink-2); }
+.total-row .tv { font-variant-numeric: tabular-nums; }
+
+.total-div {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 6px 0;
+}
+
+.total-row.grand .tl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.total-row.grand .tv {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: -0.01em;
+}
+
+/* Validity */
+.validity-bar {
+  padding: 11px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--stripe);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.inp-validity {
+  width: 44px;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 3px 6px;
+  outline: none;
+}
+
+.inp-validity:focus { border-color: var(--red); }
+
+/* ─── ACTIONS ─── */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  transition: all 0.14s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+}
+
+.btn-sec {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-sec:hover { border-color: var(--ink-2); }
+
+.btn-pri {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(200,16,46,0.28);
+}
+
+.btn-pri:hover { background: var(--red-dark); }
+
+/* ─── FOOTER ─── */
+.footer {
+  text-align: center;
+  font-size: 9.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  line-height: 1.85;
+  padding-top: 36px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 560px) {
+  .header-top { padding: 16px 18px 14px; }
+  .header-dolly { height: 140px; }
+  .card-body { padding: 16px 18px; }
+  .card-head { padding: 10px 18px; }
+  .fgrid { grid-template-columns: 1fr; }
+  .fgrid .full { grid-column: 1; }
+  .totals-wrap { padding: 0 18px 18px; }
+  .totals-box { min-width: 0; width: 100%; }
+  .validity-bar { padding: 10px 18px; font-size: 10.5px; }
+  .actions { justify-content: stretch; }
+  .btn { flex: 1; justify-content: center; }
+  .add-row-area { padding: 12px 14px; }
+}
+
+/* ─── PRINT ─── */
+@media print {
+  body { background: white; }
+  .page { padding: 0; max-width: 100%; }
+  .header { box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+  .actions, .add-row-area, .btn-rm { display: none !important; }
+  .header-dolly { height: 160px; }
+  .sel-product, .inp-qty, .inp-price, .inp-validity {
+    border: none; background: transparent; padding: 0;
+  }
+  .footer { padding-top: 20px; }
+}
+
+/* ─── DETAIL PANEL (specs + optionals) ─── */
+.detail-row td {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  background: var(--stripe) !important;
+}
+
+.detail-panel {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px 14px;
+  font-size: 12px;
+}
+
+.spec-key {
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red);
+  white-space: nowrap;
+  padding-top: 1px;
+}
+
+.spec-val {
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+.optionals-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+
+.optionals-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.opt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 5px 10px 5px 10px;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.13s, background 0.13s;
+}
+
+.opt-chip:hover {
+  border-color: var(--red);
+  background: var(--red-faint);
+}
+
+.opt-chip-price {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  font-size: 11px;
+}
+
+.opt-chip-add {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--red);
+  line-height: 1;
+}
+
+.specs-toggle {
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.13s;
+}
+.specs-toggle:hover { color: var(--red); }
+.specs-collapsed { display: none; }
+</style>
+
+<div class="page">
+
+  <!-- HEADER / MEMBRETE -->
+  <div class="header">
+    <div class="header-bar"></div>
+    <div class="header-top">
+      <div class="logo-area">
+        <svg class="logo-svg" viewBox="0 0 215 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mareqsa">
+          <path d="M5 38 C5.5 30 8 20 13 14 C16 10 19.5 10.5 22 15.5 C24 19.5 25.5 25 26 29 C27 23.5 28.5 17 31.5 12.5 C34 8.5 37.5 8 40.5 12 C43.5 16 45 26 45.5 38" stroke="#C8102E" stroke-width="3.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="55" y="32" font-family="'Barlow Condensed',Arial,sans-serif" font-weight="600" font-size="29" letter-spacing="1.5" fill="#FFFFFF">areqsa</text>
+        </svg>
+        <div class="logo-tagline">Maquilas y Remolques de Querétaro, S.A. de C.V.</div>
+      </div>
+      <div class="quote-meta">
+        <div class="meta-label">Cotización</div>
+        <div class="meta-number" id="quoteNumber">COT-2025-001</div>
+        <div class="meta-date" id="quoteDate"></div>
+      </div>
+    </div>
+    <div class="header-dolly">
+      <img src="https://i0.wp.com/mareqsa.com/wp-content/uploads/2024/03/Dolly_Dos_Ejes.webp?fit=1032%2C774&ssl=1"
+           alt="Dolly Mareqsa — Semi-remolque dos ejes">
+      <span class="header-dolly-label">Dolly Dos Ejes</span>
+    </div>
+  </div>
+
+  <!-- DATOS DEL CLIENTE -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Datos del Cliente</div></div>
+    <div class="card-body">
+      <div class="fgrid">
+        <div class="field">
+          <label>Nombre / Razón Social</label>
+          <input type="text" id="cName" placeholder="Transportes Ejemplo S.A. de C.V.">
+        </div>
+        <div class="field">
+          <label>RFC</label>
+          <input type="text" id="cRFC" placeholder="TRA-123456-XXX">
+        </div>
+        <div class="field">
+          <label>Contacto</label>
+          <input type="text" id="cContact" placeholder="Nombre del contacto">
+        </div>
+        <div class="field">
+          <label>Teléfono</label>
+          <input type="tel" id="cPhone" placeholder="442 000 0000">
+        </div>
+        <div class="field full">
+          <label>Correo Electrónico</label>
+          <input type="email" id="cEmail" placeholder="contacto@empresa.com">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Productos</div></div>
+    <div class="tbl-wrap">
+      <table class="ptbl">
+        <thead>
+          <tr>
+            <th style="width:40%">Producto / Modelo</th>
+            <th class="c" style="width:10%">Cant.</th>
+            <th class="r" style="width:22%">Precio Unit. (MXN)</th>
+            <th class="r" style="width:20%">Total</th>
+            <th style="width:8%"></th>
+          </tr>
+        </thead>
+        <tbody id="ptbody"></tbody>
+      </table>
+    </div>
+    <div class="add-row-area">
+      <button class="btn-add" onclick="addRow()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Agregar producto
+      </button>
+    </div>
+    <div class="totals-wrap">
+      <div class="totals-box">
+        <div class="total-row">
+          <span class="tl">Subtotal</span>
+          <span class="tv" id="tSubtotal">$0.00</span>
+        </div>
+        <div class="total-row">
+          <span class="tl">IVA (16%)</span>
+          <span class="tv" id="tIva">$0.00</span>
+        </div>
+        <hr class="total-div">
+        <div class="total-row grand">
+          <span class="tl">Total</span>
+          <span class="tv" id="tGrand">$0.00</span>
+        </div>
+      </div>
+    </div>
+    <div class="validity-bar">
+      <span>
+        Vigencia:&nbsp;
+        <input type="number" class="inp-validity" id="validity" value="30" min="1" max="365">
+        &nbsp;días a partir de la fecha de emisión
+      </span>
+      <span>Precios en pesos mexicanos (MXN) · Sujeto a disponibilidad</span>
+    </div>
+  </div>
+
+  <!-- NOTAS -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Notas y Condiciones</div></div>
+    <div class="card-body">
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea id="notes">• Entrega estimada: 90 días hábiles a partir de confirmación de pedido.
+• Forma de pago: 50% anticipo, 50% contra entrega.
+• Precios sujetos a variaciones en costos de materia prima.
+• Garantía conforme a condiciones generales de Mareqsa.</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCIONES -->
+  <div class="actions">
+    <button class="btn btn-sec" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir / PDF
+    </button>
+    <button class="btn btn-pri" onclick="sendEmail()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Enviar por Correo
+    </button>
+  </div>
+
+  <div class="footer">
+    CAMINO AL POZO VIEJO S/N, LA PIEDAD, EL MARQUÉS, QUERÉTARO, QRO. C.P. 76846<br>
+    CERR. CONCORDIA NO.12-B FRACCIONAMIENTO INDUSTRIAL MONTAÑA QUERÉTARO, QRO. C.P. 76150<br>
+    TELS.: 442-217-00-01 Y 217-08-58 &nbsp;·&nbsp; www.mareqsa.com &nbsp;·&nbsp; R.F.C. MAQ-750801-8AA
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  {
+    name: "Dolly Mareqsa",
+    price: 298500,
+    specs: [
+      ["Bastidor",      "Vigas tipo «I» de 7¼" de peralte con alma en placa 5/16" A-36, patín inferior solera 5/8"×6" H-50, patín superior 3/8"×12" A-36 y puentes en placa 1/4" A-36."],
+      ["Lanza",         "PTR 2"×3" Cal. 3/16", placa 5/16" A-36 y argolla marca Premier."],
+      ["Quinta Rueda",  "Fundida marca Jost."],
+      ["Ejes",          "Dos de 30,000 lbs de capacidad con boster doble y matracas autoajustables."],
+      ["Rines",         "8.25"×24.5" de dimensión y 8,000 lbs de capacidad por rin."]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",        price: 12500 },
+      { name: "Sistema de eje retráctil", price: 28000 },
+      { name: "Sistema de autoinflado",   price: 8500  },
+      { name: "Llantas (juego completo)", price: 18000 },
+      { name: "Lanza larga",             price: 6500  }
+    ]
+  },
+  {
+    name: "Jaula Granelera 35'",
+    price: 452000,
+    specs: [
+      ["Longitud",    "35 pies (10.67 m)"],
+      ["Capacidad",   "Diseñada para carga a granel"],
+      ["Estructura",  "Marco principal tubular A-36 con refuerzos laterales"],
+      ["Ejes",        "Dos de 30,000 lbs con suspensión de muelle"],
+      ["Rines",       "8.25"×22.5" de acero"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Toldo hidráulico",    price: 22000 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Compuerta adicional", price: 9500  }
+    ]
+  },
+  {
+    name: "Jaula Granelera 48'",
+    price: 524000,
+    specs: [
+      ["Longitud",    "48 pies (14.63 m)"],
+      ["Capacidad",   "Mayor volumen para carga a granel"],
+      ["Estructura",  "Marco principal tubular A-36 con refuerzos laterales"],
+      ["Ejes",        "Dos de 30,000 lbs con suspensión de muelle"],
+      ["Rines",       "8.25"×22.5" de acero"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Toldo hidráulico",    price: 22000 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Compuerta adicional", price: 9500  }
+    ]
+  },
+  {
+    name: "Plataforma Futura 35'",
+    price: 385000,
+    specs: [
+      ["Longitud",   "35 pies (10.67 m)"],
+      ["Bastidor",   "Vigas tipo «I» de acero A-36 con refuerzos transversales"],
+      ["Piso",       "Madera tropical de 1.5" o piso de acero estriado (a elección)"],
+      ["Ejes",       "Dos de 30,000 lbs con sistema de frenos autoajustables"],
+      ["Rines",      "8.25"×22.5", capacidad 8,000 lbs"]
+    ],
+    optionals: [
+      { name: "Piso de acero estriado",  price: 15000 },
+      { name: "Rines de aluminio",       price: 12500 },
+      { name: "Iluminación LED",         price: 6800  },
+      { name: "Extensiones laterales",   price: 11000 },
+      { name: "Llantas (juego)",         price: 18000 }
+    ]
+  },
+  {
+    name: "Plataforma Futura 48'",
+    price: 438500,
+    specs: [
+      ["Longitud",   "48 pies (14.63 m)"],
+      ["Bastidor",   "Vigas tipo «I» de acero A-36 con refuerzos transversales"],
+      ["Piso",       "Madera tropical de 1.5" o piso de acero estriado (a elección)"],
+      ["Ejes",       "Dos de 30,000 lbs con sistema de frenos autoajustables"],
+      ["Rines",      "8.25"×22.5", capacidad 8,000 lbs"]
+    ],
+    optionals: [
+      { name: "Piso de acero estriado",  price: 15000 },
+      { name: "Rines de aluminio",       price: 12500 },
+      { name: "Iluminación LED",         price: 6800  },
+      { name: "Extensiones laterales",   price: 11000 },
+      { name: "Llantas (juego)",         price: 18000 }
+    ]
+  },
+  {
+    name: "Plataforma Desnivelada 35'",
+    price: 398000,
+    specs: [
+      ["Longitud",    "35 pies (10.67 m)"],
+      ["Diseño",      "Sección delantera desnivelada para mayor altura libre de carga"],
+      ["Bastidor",    "Vigas tipo «I» reforzadas, acero A-36"],
+      ["Ejes",        "Dos de 30,000 lbs"],
+      ["Rines",       "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Iluminación LED",     price: 6800  },
+      { name: "Extensiones",         price: 11000 }
+    ]
+  },
+  {
+    name: "Plataforma Desnivelada 48'",
+    price: 451000,
+    specs: [
+      ["Longitud",    "48 pies (14.63 m)"],
+      ["Diseño",      "Sección delantera desnivelada para mayor altura libre de carga"],
+      ["Bastidor",    "Vigas tipo «I» reforzadas, acero A-36"],
+      ["Ejes",        "Dos de 30,000 lbs"],
+      ["Rines",       "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Iluminación LED",     price: 6800  },
+      { name: "Extensiones",         price: 11000 }
+    ]
+  },
+  {
+    name: "Plataforma High Cube",
+    price: 496500,
+    specs: [
+      ["Diseño",      "Cuatro vigas tipo «I», máxima rigidez torsional"],
+      ["Altura",      "Mayor distancia al suelo para contenedores High Cube"],
+      ["Ejes",        "Dos de 30,000 lbs"],
+      ["Rines",       "8.25"×22.5""],
+      ["Acabado",     "Pintura anticorrosiva de alta durabilidad"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Iluminación LED",     price: 6800  }
+    ]
+  },
+  {
+    name: "Plataforma Trailmex 35'",
+    price: 374000,
+    specs: [
+      ["Longitud",   "35 pies (10.67 m)"],
+      ["Bastidor",   "Diseño Trailmex con vigas reforzadas A-36"],
+      ["Piso",       "Madera tropical 1.5""],
+      ["Ejes",       "Dos de 30,000 lbs"],
+      ["Rines",      "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Iluminación LED",     price: 6800  }
+    ]
+  },
+  {
+    name: "Plataforma Trailmex 48'",
+    price: 427000,
+    specs: [
+      ["Longitud",   "48 pies (14.63 m)"],
+      ["Bastidor",   "Diseño Trailmex con vigas reforzadas A-36"],
+      ["Piso",       "Madera tropical 1.5""],
+      ["Ejes",       "Dos de 30,000 lbs"],
+      ["Rines",      "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Iluminación LED",     price: 6800  }
+    ]
+  },
+  {
+    name: "Tolvas Graneleras 50m³",
+    price: 562000,
+    specs: [
+      ["Capacidad",    "50 m³"],
+      ["Descarga",     "Sistema de doble compuerta inferior"],
+      ["Material",     "Acero A-36 con recubrimiento anticorrosivo interior"],
+      ["Ejes",         "Dos de 30,000 lbs"],
+      ["Rines",        "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",       price: 12500 },
+      { name: "Sistema de pesaje",       price: 35000 },
+      { name: "Toldo enrollable",        price: 14000 },
+      { name: "Llantas (juego)",         price: 18000 },
+      { name: "Compuerta neumática",     price: 22000 }
+    ]
+  },
+  {
+    name: "Volteo 30m³",
+    price: 484000,
+    specs: [
+      ["Capacidad",    "30 m³"],
+      ["Estructura",   "Caja de acero A-36, esquinas reforzadas"],
+      ["Hidráulico",   "Cilindro telescópico marca Parker"],
+      ["Ejes",         "Dos de 30,000 lbs"],
+      ["Rines",        "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Lona enrollable",     price: 9500  },
+      { name: "Llantas (juego)",     price: 18000 }
+    ]
+  },
+  {
+    name: "Volteo 40m³",
+    price: 536000,
+    specs: [
+      ["Capacidad",    "40 m³"],
+      ["Estructura",   "Caja de acero A-36, esquinas reforzadas"],
+      ["Hidráulico",   "Cilindro telescópico marca Parker"],
+      ["Ejes",         "Dos de 30,000 lbs"],
+      ["Rines",        "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Lona enrollable",     price: 9500  },
+      { name: "Llantas (juego)",     price: 18000 }
+    ]
+  },
+  {
+    name: "Volteo 50m³",
+    price: 592500,
+    specs: [
+      ["Capacidad",    "50 m³"],
+      ["Estructura",   "Caja de acero A-36, esquinas reforzadas"],
+      ["Hidráulico",   "Cilindro telescópico marca Parker"],
+      ["Ejes",         "Dos de 30,000 lbs"],
+      ["Rines",        "8.25"×22.5""]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",   price: 12500 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Lona enrollable",     price: 9500  },
+      { name: "Llantas (juego)",     price: 18000 }
+    ]
+  },
+  {
+    name: "Volteo Acero Inoxidable",
+    price: 658000,
+    specs: [
+      ["Material",     "Acero inoxidable 304 calibre 12"],
+      ["Diseño",       "Dos vigas formadas en chasis, alta resistencia a corrosión"],
+      ["Hidráulico",   "Cilindro telescópico doble acción"],
+      ["Ejes",         "Dos de 30,000 lbs"],
+      ["Rines",        "8.25"×22.5" acero inoxidable o aluminio"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",      price: 14000 },
+      { name: "Sistema de pesaje",      price: 35000 },
+      { name: "Lona enrollable",        price: 9500  },
+      { name: "Llantas (juego)",        price: 18000 },
+      { name: "Pulido espejo interior", price: 18000 }
+    ]
+  }
+];
+
+let rows = [];
+
+const fmt = n => new Intl.NumberFormat('es-MX', {
+  style: 'currency', currency: 'MXN', minimumFractionDigits: 2
+}).format(n);
+
+function genQuoteNum() {
+  const y = new Date().getFullYear();
+  const n = String(Math.floor(Math.random() * 900) + 100);
+  return `COT-${y}-${n}`;
+}
+
+function setDate() {
+  const d = new Date();
+  document.getElementById('quoteDate').textContent =
+    d.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function productOptions(selected) {
+  return PRODUCTS.map((p, i) =>
+    `<option value="${i}"${i === selected ? ' selected' : ''}>${p.name}</option>`
+  ).join('');
+}
+
+function addRow(idx = 0) {
+  rows.push({ idx, qty: 1, price: PRODUCTS[idx].price, showSpecs: true });
+  render();
+}
+
+function removeRow(i) {
+  rows.splice(i, 1);
+  render();
+}
+
+function changeProduct(i, val) {
+  rows[i].idx = +val;
+  rows[i].price = PRODUCTS[+val].price;
+  rows[i].showSpecs = true;
+  render();
+}
+
+function changeQty(i, val) {
+  rows[i].qty = Math.max(1, parseInt(val) || 1);
+  updateTotals();
+}
+
+function changePrice(i, val) {
+  rows[i].price = parseFloat(val.replace(/[^\d.]/g, '')) || 0;
+  updateTotals();
+}
+
+function toggleSpecs(i) {
+  rows[i].showSpecs = !rows[i].showSpecs;
+  render();
+}
+
+function addOptional(rowIdx, optIdx) {
+  const prod = PRODUCTS[rows[rowIdx].idx];
+  const opt = prod.optionals[optIdx];
+  rows.push({ idx: rows[rowIdx].idx, qty: 1, price: opt.price, customName: opt.name, showSpecs: false });
+  render();
+}
+
+function renderDetailPanel(i) {
+  const prod = PRODUCTS[rows[i].idx];
+  const showSpecs = rows[i].showSpecs;
+  const specsHtml = prod.specs.map(([k,v]) =>
+    `<span class="spec-key">${k}</span><span class="spec-val">${v}</span>`
+  ).join('');
+  const optsHtml = prod.optionals.map((o, oi) =>
+    `<button class="opt-chip" onclick="addOptional(${i},${oi})" title="Agregar a cotización">
+      <span class="opt-chip-add">+</span>
+      <span>${o.name}</span>
+      <span class="opt-chip-price">${fmt(o.price)}</span>
+    </button>`
+  ).join('');
+  return `
+<tr class="detail-row">
+  <td colspan="5">
+    <div class="detail-panel">
+      <div>
+        <button class="specs-toggle" onclick="toggleSpecs(${i})">
+          ${showSpecs ? '▾' : '▸'} Especificaciones técnicas
+        </button>
+        <div class="specs-grid ${showSpecs ? '' : 'specs-collapsed'}" style="margin-top:8px">
+          ${specsHtml}
+        </div>
+      </div>
+      ${prod.optionals.length ? `
+      <div>
+        <div class="optionals-label">Equipo opcional</div>
+        <div class="optionals-list">${optsHtml}</div>
+      </div>` : ''}
+    </div>
+  </td>
+</tr>`;
+}
+
+function render() {
+  const tbody = document.getElementById('ptbody');
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr class="empty"><td colspan="5">Agrega productos con el botón de abajo</td></tr>`;
+    updateTotals();
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => {
+    const prod = PRODUCTS[r.idx];
+    const name = r.customName || prod.name;
+    const total = r.qty * r.price;
+    const mainRow = `
+<tr>
+  <td><select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>
+      ${r.customName ? `<div style="font-size:11px;color:var(--ink-3);margin-top:3px;padding-left:2px">↳ ${r.customName}</div>` : ''}
+  </td>
+  <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
+  <td style="text-align:right"><input type="text" class="inp-price" value="${r.price.toLocaleString('es-MX')}" onblur="changePrice(${i},this.value)"></td>
+  <td class="row-total">${fmt(total)}</td>
+  <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
+</tr>`;
+    // Only show detail panel for non-optional rows (no customName)
+    const detailRow = !r.customName ? renderDetailPanel(i) : '';
+    return mainRow + detailRow;
+  }).join('');
+  updateTotals();
+}
+
+function updateTotals() {
+  const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
+  const iva = sub * 0.16;
+  document.getElementById('tSubtotal').textContent = fmt(sub);
+  document.getElementById('tIva').textContent = fmt(iva);
+  document.getElementById('tGrand').textContent = fmt(sub + iva);
+}
+
+function sendEmail() {
+  const to = document.getElementById('cEmail').value.trim();
+  const num = document.getElementById('quoteNumber').textContent;
+  const date = document.getElementById('quoteDate').textContent;
+  const name = document.getElementById('cName').value.trim();
+  const contact = document.getElementById('cContact').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const validity = document.getElementById('validity').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!to) {
+    const el = document.getElementById('cEmail');
+    el.focus(); el.style.borderColor = 'var(--red)';
+    setTimeout(() => el.style.borderColor = '', 2000);
+    return;
+  }
+
+  const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
+  const iva = sub * 0.16;
+  const grand = sub + iva;
+
+  let body = `COTIZACIÓN MAREQSA\n${num} · ${date}\n`;
+  body += `\nCLIENTE: ${name || '—'}`;
+  if (contact) body += `\nCONTACTO: ${contact}`;
+  if (phone) body += `\nTELÉFONO: ${phone}`;
+  body += `\n\nPRODUCTOS:\n${'─'.repeat(44)}\n`;
+  rows.forEach(r => {
+    const label = r.customName ? `  + ${r.customName}` : PRODUCTS[r.idx].name;
+    body += `${label}\n  ${r.qty} u × ${fmt(r.price)} = ${fmt(r.qty * r.price)}\n`;
+  });
+  body += `${'─'.repeat(44)}\n`;
+  body += `Subtotal:    ${fmt(sub)}\nIVA (16%):   ${fmt(iva)}\nTOTAL:       ${fmt(grand)}\n`;
+  body += `\nVigencia: ${validity} días\n`;
+  if (notes) body += `\nNOTAS:\n${notes}\n`;
+  body += `\nMaquilas y Remolques de Querétaro, S.A. de C.V.\nwww.mareqsa.com · Tel. 442-217-00-01`;
+
+  const subject = encodeURIComponent(`Cotización Mareqsa ${num}${name ? ' — ' + name : ''}`);
+  window.location.href = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(body)}`;
+}
+
+// Init
+document.getElementById('quoteNumber').textContent = genQuoteNum();
+setDate();
+addRow(0);
+</script>
