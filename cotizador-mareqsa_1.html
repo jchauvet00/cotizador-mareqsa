@@ -815,7 +815,7 @@ const PRODUCTS = [
     name: "Jaula Granelera 35'",
     price: 452000,
     specs: [
-      ["Longitud",   "35 pies (10.67 m)"],
+      ["Longitud",    "35 pies (10.67 m)"],
       ["Capacidad",   "Diseñada para carga a granel"],
       ["Estructura",  "Marco principal tubular A-36 con refuerzos laterales"],
       ["Ejes",        "Dos de 30,000 lbs con suspensión de muelle"],
@@ -834,7 +834,7 @@ const PRODUCTS = [
     price: 524000,
     specs: [
       ["Longitud",    "48 pies (14.63 m)"],
-      ["Capacidad",   "Mayor olumen para carga a granel"],
+      ["Capacidad",   "Mayor volumen para carga a granel"],
       ["Estructura",  "Marco principal tubular A-36 con refuerzos laterales"],
       ["Ejes",        "Dos de 30,000 lbs con suspensión de muelle"],
       ["Rines",       "8.25"×22.5" de acero"]
@@ -851,8 +851,369 @@ const PRODUCTS = [
     name: "Plataforma Futura 35'",
     price: 385000,
     specs: [
-      ["Longitud",    "35 pies (10.67 m)"],
+      ["Longitud",   "35 pies (10.67 m)"],
       ["Bastidor",   "Vigas tipo «I» de acero A-36 con refuerzos transversales"],
       ["Piso",       "Madera tropical de 1.5" o piso de acero estriado (a elección)"],
       ["Ejes",       "Dos de 30,000 lbs con sistema de frenos autoajustables"],
-      ["Rines",      "8.25"×22.5
+      ["Rines",      "8.25"×22.5", capacidad por rin"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",    price: 12500 },
+      { name: "Piso de acero",       price: 18000 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Alargador de lanza",  price: 5500  }
+    ]
+  },
+  {
+    name: "Plataforma Futura 48'",
+    price: 458000,
+    specs: [
+      ["Longitud",    "48 pies (14.63 m)"],
+      ["Bastidor",   "Vigas tipo «I» de acero A-36 con refuerzos transversales"],
+      ["Piso",       "Madera tropical de 1.5" o piso de acero estriado (a elección)"],
+      ["Ejes",       "Dos de 30,000 lbs con sistema de frenos autoajustables"],
+      ["Rines",      "8.25"×22.5", capacidad por rin"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",    price: 12500 },
+      { name: "Piso de acero",       price: 18000 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Alargador de lanza",  price: 5500  }
+    ]
+  },
+  {
+    name: "Remolque Tanca 10,000 L",
+    price: 485000,
+    specs: [
+      ["Capacidad",   "10,000 litros"],
+      ["Material",    "Acero inoxidable o acero al carbón"],
+      ["Certificación", "NOM Menxicana aplicable"],
+      ["Ejes",        "Dos de 30,000 lbs con suspensión de muelle"],
+      ["Equipo",      "Valvula de descarga, medidor y manguera de carga"]
+    ],
+    optionals: [
+      { name: "Rines de aluminio",    price: 12500 },
+      { name: "Bomba hidráulica",    price: 32000 },
+      { name: "Sistema de pesaje",   price: 35000 },
+      { name: "Llantas (juego)",     price: 18000 },
+      { name: "Acero*inoxidable",    price: 6500  }
+    ]
+  },
+  {
+    name: "Refacciones / Servicio",
+    price: 1,
+    specs: [],
+    optionals: []
+  }
+];
+
+let rows = [];
+let showSpecsMap = {};
+
+function fmt(n) {
+  return new Intl.NumberFormat('es-MX', {style:'currency',currency:'MXN',minimumFractionDigits:2,compactDisplay:'short'}).format(n);
+}
+
+function genQuoteNum() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const n = Math.floor(Math.random() * 899) + 100;
+  return `COT-${y}-${n.toString().padStart(3, '0')}`;
+}
+
+function setDate() {
+  const opt = {year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('quoteDate').textContent = new Date().toLocaleDateString('es-MX', opt);
+}
+
+function productOptions(currIdx) {
+  return PRODUCTS.map((p, i) =>
+    `<option value="${i}" ${i === currIdx ? 'selected' : ''}>${p.name}</option>`
+  ).join('');
+}
+
+function addRow(idx = 0) {
+  const prod = PRODUCTS[idx];
+  rows.push({ idx, qty: 1, price: prod.price });
+  render();
+}
+
+function removeRow(i) {
+  rows.splice(i, 1);
+  delete showSpecsMap[i];
+  showSpecsMap = Object.fromEntries(
+    Object.entries(showSpecsMap)
+      .filter(([k]) => Number(k) < rows.length)
+  );
+  render();
+}
+
+function changeProduct(i, val) {
+  const idx = Number(val);
+  rows[i].idx = idx;
+  rows[i].price = PRODUCTS[idx].price;
+  render();
+}
+
+function changeQty(i, v) { rows[i].qty = Math.max(1, Number(v) || 1); updateTotals(); }
+
+function changePrice(i, v) {
+  const n = parseFloat(v.replace(/[^\d.]/g, ''));
+  if (!isNaN(n)) { rows[i].price = n; updateTotals(); }
+}
+
+function toggleSpecs(i) {
+  showSpecsMap[i] = !showSpecsMap[i];
+  render();
+}
+
+function addOptional(i, oi) {
+  const opt = PRODUCTS[rows[i].idx].optionals[oi];
+  rows.push({ idx: rows[i].idx, qty: 1, price: opt.price, customName: opt.name });
+  render();
+}
+
+function renderDetailPanel(i) {
+  const prod = PRODUCTS[rows[i].idx];
+  const showSpecs = showSpecsMap[i];
+  const specsHtml = prod.specs.map(([k,v]) =>
+    `<span class="spec-key">${k}</span><span class="spec-val">${v}</span>`
+  ).join('');
+  const optsHtml = prod.optionals.map((o, oi) =>
+    `<button class="opt-chip" onclick="addOptional(${i},${oi})" title="Agregar a cotización">
+      <span class="opt-chip-add">+</span>
+      <span>${o.name}</span>
+      <span class="opt-chip-price">${fmt(o.price)}</span>
+    </button>`
+  ).join('');
+  return `
+<tr class="detail-row">
+  <td colspan="5">
+    <div class="detail-panel">
+      <div>
+        <button class="specs-toggle" onclick="toggleSpecs(${i})">
+          ${showSpecs ? '�&' : '▸'} Especificaciones técnicas
+        </button>
+        <div class="specs-grid ${showSpecs ? '' : 'specs-collapsed'}" style="margin-top:8px">
+          ${specsHtml}
+        </div>
+      </div>
+      ${prod.optionals.length ? `
+  <div>
+        <div class="optionals-label">Equipo opcional</div>
+        <div class="optionals-list">${optsHtml}</div>
+      </div>` : ''}
+    </div>
+  </td>
+</tr>`;
+}
+
+function render() {
+  const tbody = document.getElementById('ptbody');
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr class="empty"><td colspan="5">Agrega productos con el botón de abajo</td></tr>`;
+    updateTotals();
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => {
+    const prod = PRODUCTS[r.idx];
+    const name = r.customName || prod.name;
+    const total = r.qty * r.price;
+    const mainRow = `
+<tr>
+  <td><select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>
+      ${r.customName ? `<div style="font-size:11px;color:var(--ink-3);margin-top:3px;padding-left:2px">↳ ${r.customName}</div>` : ''}
+  </td>
+  <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
+  <td style="text-align:right"><input type="text" class="inp-price" value="${r.price.toLocaleString('es-MX')}" onblur="changePrice(${i},this.value)"></td>
+  <td class="row-total">${fmt(total)}</td>
+  <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
+</tr>`;
+    // Only show detail panel for non-optional rows (no customName)
+    const detailRow = !r.customName ? renderDetailPanel(i) : '';
+    return mainRow + detailRow;
+  }).join('');
+  updateTotals();
+}
+
+function updateTotals() {
+  const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
+  const iva = sub * 0.16;
+  document.getElementById('tSubtotal').textContent = fmt(sub);
+  document.getElementById('tIva').textContent = fmt(iva);
+  document.getElementById('tGrand').textContent = fmt(sub + iva);
+}
+
+function sendEmail() {
+  const to = document.getElementById('cEmail').value.trim();
+  const num = document.getElementById('quoteNumber').textContent;
+  const date = document.getElementById('quoteDate').textContent;
+  const name = document.getElementById('cName').value.trim();
+  const contact = document.getElementById('cContact').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const validity = document.getElementById('validity').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!to) {
+    const el = document.getElementById('cEmail');
+    el.focus(); el.style.borderColor = 'var(--red)';
+    setTimeout(() => el.style.borderColor = '', 2000);
+    return;
+  }
+
+  const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
+  const iva = sub * 0.16;
+  const grand = sub + iva;
+
+  let body = `COTIZACIÓN MAREQSA\n${num} ¿ ${date}\n`;
+  body += `\nCLIENTE: ${name || '—'}`;
+  if (contact) body += `\nCONTACTO: ${contact}`;
+  if (phone) body += `\nTELÉFONO: ${phone}`;
+  body += `\n\nPRODUCTOS:\n${'─'.repeat(44)}\n`;
+  rows.forEach(r => {
+    const label = r.customName ? `  + ${r.customName}` : PRODUCTS[r.idx].name;
+    body += `${label}\n  ${r.qty} u × ${fmt(r.price)} = ${fmt(r.qty * r.price)}\n`;
+  });
+  body += `${'─'.repeat(44)}\n`;
+  body += `Subtotal:    ${fmt(sub)}\nIVA (16%):    ${fmt(iva)}\nTOTAL:       ${fmt(grand)}\n`;
+  body += `\nVigencia: ${validity} días\n`;
+  if (notes) body += `\nNOTAS:\n${notes}\n`;
+  body += `\nMaquilas y Remolques de Querétaro, S.A. de C.V.\nwww.mareqsa.com ¿ Tel. 442-217-00-01`;
+
+  const subject = encodeURIComponent(`Cotización Mareqsa ${num}${name ? ' — ' + name : ''}`);
+  window.location.href = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(body)}`;
+}
+
+// Init
+document.getElementById('quoteNumber').textContent = genQuoteNum();
+setDate();
+addRow(0);
+</script>
+();
+}
+
+function addOptional(rowIdx, optIdx) {
+  const prod = PRODUCTS[rows[rowIdx].idx];
+  const opt = prod.optionals[optIdx];
+  rows.push({ idx: rows[rowIdx].idx, qty: 1, price: opt.price, customName: opt.name, showSpecs: false });
+  render();
+}
+
+function renderDetailPanel(i) {
+  const prod = PRODUCTS[rows[i].idx];
+  const showSpecs = rows[i].showSpecs;
+  const specsHtml = prod.specs.map(([k,v]) =>
+    `<span class="spec-key">${k}</span><span class="spec-val">${v}</span>`
+  ).join('');
+  const optsHtml = prod.optionals.map((o, oi) =>
+    `<button class="opt-chip" onclick="addOptional(${i},${oi})" title="Agregar a cotización">
+      <span class="opt-chip-add">+</span>
+      <span>${o.name}</span>
+      <span class="opt-chip-price">${fmt(o.price)}</span>
+    </button>`
+  ).join('');
+  return `
+<tr class="detail-row">
+  <td colspan="5">
+    <div class="detail-panel">
+      <div>
+        <button class="specs-toggle" onclick="toggleSpecs(${i})">
+          ${showSpecs ? '▾' : '▸'} Especificaciones técnicas
+        </button>
+        <div class="specs-grid ${showSpecs ? '' : 'specs-collapsed'}" style="margin-top:8px">
+          ${specsHtml}
+        </div>
+      </div>
+      ${prod.optionals.length ? `
+      <div>
+        <div class="optionals-label">Equipo opcional</div>
+        <div class="optionals-list">${optsHtml}</div>
+      </div>` : ''}
+    </div>
+  </td>
+</tr>`;
+}
+
+function render() {
+  const tbody = document.getElementById('ptbody');
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr class="empty"><td colspan="5">Agrega productos con el botón de abajo</td></tr>`;
+    updateTotals();
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => {
+    const prod = PRODUCTS[r.idx];
+    const name = r.customName || prod.name;
+    const total = r.qty * r.price;
+    const mainRow = `
+<tr>
+  <td><select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>
+      ${r.customName ? `<div style="font-size:11px;color:var(--ink-3);margin-top:3px;padding-left:2px">↳ ${r.customName}</div>` : ''}
+  </td>
+  <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
+  <td style="text-align:right"><input type="text" class="inp-price" value="${r.price.toLocaleString('es-MX')}" onblur="changePrice(${i},this.value)"></td>
+  <td class="row-total">${fmt(total)}</td>
+  <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
+</tr>`;
+    // Only show detail panel for non-optional rows (no customName)
+    const detailRow = !r.customName ? renderDetailPanel(i) : '';
+    return mainRow + detailRow;
+  }).join('');
+  updateTotals();
+}
+
+function updateTotals() {
+  const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
+  const iva = sub * 0.16;
+  document.getElementById('tSubtotal').textContent = fmt(sub);
+  document.getElementById('tIva').textContent = fmt(iva);
+  document.getElementById('tGrand').textContent = fmt(sub + iva);
+}
+
+function sendEmail() {
+  const to = document.getElementById('cEmail').value.trim();
+  const num = document.getElementById('quoteNumber').textContent;
+  const date = document.getElementById('quoteDate').textContent;
+  const name = document.getElementById('cName').value.trim();
+  const contact = document.getElementById('cContact').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const validity = document.getElementById('validity').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!to) {
+    const el = document.getElementById('cEmail');
+    el.focus(); el.style.borderColor = 'var(--red)';
+    setTimeout(() => el.style.borderColor = '', 2000);
+    return;
+  }
+
+  const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
+  const iva = sub * 0.16;
+  const grand = sub + iva;
+
+  let body = `COTIZACIÓN MAREQSA\n${num} · ${date}\n`;
+  body += `\nCLIENTE: ${name || '—'}`;
+  if (contact) body += `\nCONTACTO: ${contact}`;
+  if (phone) body += `\nTELÉFONO: ${phone}`;
+  body += `\n\nPRODUCTOS:\n${'─'.repeat(44)}\n`;
+  rows.forEach(r => {
+    const label = r.customName ? `  + ${r.customName}` : PRODUCTS[r.idx].name;
+    body += `${label}\n  ${r.qty} u × ${fmt(r.price)} = ${fmt(r.qty * r.price)}\n`;
+  });
+  body += `${'─'.repeat(44)}\n`;
+  body += `Subtotal:    ${fmt(sub)}\nIVA (16%):   ${fmt(iva)}\nTOTAL:       ${fmt(grand)}\n`;
+  body += `\nVigencia: ${validity} días\n`;
+  if (notes) body += `\nNOTAS:\n${notes}\n`;
+  body += `\nMaquilas y Remolques de Querétaro, S.A. de C.V.\nwww.mareqsa.com · Tel. 442-217-00-01`;
+
+  const subject = encodeURIComponent(`Cotización Mareqsa ${num}${name ? ' — ' + name : ''}`);
+  window.location.href = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(body)}`;
+}
+
+// Init
+document.getElementById('quoteNumber').textContent = genQuoteNum();
+setDate();
+addRow(0);
+</script>
