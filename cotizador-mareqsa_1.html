@@ -138,9 +138,11 @@ body {
   gap: 6px;
 }
 
-.logo-svg {
+.logo-img {
   height: 36px;
   width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .logo-tagline {
@@ -660,10 +662,7 @@ table.ptbl {
     <div class="header-bar"></div>
     <div class="header-top">
       <div class="logo-area">
-        <svg class="logo-svg" viewBox="0 0 215 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mareqsa">
-          <path d="M5 38 C5.5 30 8 20 13 14 C16 10 19.5 10.5 22 15.5 C24 19.5 25.5 25 26 29 C27 23.5 28.5 17 31.5 12.5 C34 8.5 37.5 8 40.5 12 C43.5 16 45 26 45.5 38" stroke="#C8102E" stroke-width="3.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <text x="55" y="32" font-family="'Barlow Condensed',Arial,sans-serif" font-weight="600" font-size="29" letter-spacing="1.5" fill="#FFFFFF">areqsa</text>
-        </svg>
+        <img class="logo-img" src="data:image/webp;base64,UklGRqoFAABXRUJQVlA4WAoAAAAQAAAAqQAAKAAAQUxQSNUDAAARkBTbVhhITwISkIAEJEQCEiIBB5GAhEj4EpCAhC/hLiCku2sm64iYAP1iyDnpC4ezA/TweWJj3B3g+jihYlnSDdi3OX1kzQdwf5nUqVpnoH6YSk96vID8WWLn0uYA11c93Is2D6B9lYon7RqQvkm46Um7ETDNadRvETo9aLsBaSpQPkUa9KDtCFySVMDDl0hOD9qvMIKkBjR9yOT0oP3gcEhqAPFDRMeDXl5wS2oApu8YOp70MoJH6YQbjg9hcOjtDadUoDWGvuMFl95m6FKCnuD8Dgd0vR6QlBwPFcJnCA7pVYVLYeBJTtM6hUWutcbUHO5DUmwOVjZSGzBaUq21SCq1llCHLVLrMFreCacBVlRqrYvUYNTwEGoHv7NKrRUuvY3OCKFDUYG0arRFBRrrpuQse1hdPBbAJBn0DlNoPFp4OJx178BUWPawKM66GRgeXt1wqMEldUzLC2xjszqP9xQ6+w+zSaGz2cOi8FJS9BXnVHl7622GWxVuKUNZZKDtmU+zjYko6WJ283ejSjeAmw2APmWWve+cwHk4dEkHSxsro74aeCzQg9QYmoMDdacFqS4sSGU6pAjgh6Tse54lHQA1SDoBiiSbapDi/VTBpWJmkgbgp6Tcp/quwpnBoxShLozrRZCkPkVJakCVLsCT5uBbhyQZcGl5AkNKAKeW9w530PIAyJpDB9TSi+hYckiSKsTppIc901yBrrmuOlC1LluaAVpdA0RVoGsdHwqA1zBdQNM6T69vyA5FkgZNkhIeBcfGtWGLvAJID+FVnvazbqA+qK/CYPYiyYDyoPEDB1wdLkk6IEkKnUOCvFE36rvwoL9ge7ZS6hOUVX6yd2EwDG7NjS5JjUt/ZADHQ3qVJttOasD1NB6kwyYPuoH65O8qOPSwcIqkE9MPlXcG3A/tlaag/RMYYZXZkLIDWRUYD4VXkdmD5gxBOvDwU/ndCVAWhXc3UFfFzKoUAdoi9FUGsnQsEkBbJH9nkyctKyYlJ+nPBAewI+fGD2SAK0rxAiiSDMAOhTJYReCS6kIG0EvOl/OqAHjS2uhKTtHD+Xsq0+4LXcxjMJskReelpAG0Brik5OxvBQc86dGhO0VP9Q/o2vF3atO6h0nJ3xUeqySVn7sAT3pMzEWPHfsLOsbKi/2Aqj9cQetkD62vdK2alqk/XLaXAE96LoAXPRssYs45LkLOOS5CzjkupNLM7IxKOSdJKef8pHDeZvcZtZsvM6tR9qDczFrW83GZ2ZWUct4x6EGbJ1jU5gll+mdv/MkT7qDts2g7OvYZnKrfrRA/QrizfrvR/nMAVlA4IK4BAABQDACdASqqACkAPp1Emkmlo6IhKNjtULATiWQIcAXwAikn+/cOPi2d645d+UDtAbYDzAboB+wHqq+oB6FflpftV8Ev7YfsN7VQCeU7wf3DwfEx1VRirYIdUcXu1Ki/3OEUapz32dRr/rSjQAD+HIf8PP/4YT//RBAGV7lqUaYYkuzayV+Iua5Y5/Tm4UtJk6v+56yx9dHJmX4QpBHfD2EpR50KYpff3hFq/wtpM4IUQp0gS1yZrdWnsBX6n7bcb/5en/zKv/+r4lGW6hIhgpYv/sYRpjUFFwm9LQI35trdou6o+f6e7qOI6TW3bX1dYQTiCEik35pWbihrON9X5ziR0rCciiRr/TEJwU6H/J1rcp3mdQJQZewf5DomCiMB64PLNdco6E4Tuk7yFQuMEJo5W3tC7efyPlvkH6KA+Ji7ivqb+/hK1gcf8vD/zmvLK/PKppeS84HBbVscpG8yu4r6hBfejG4nOZglrY2BX89kW3/EUc0sgRVF395dyccwrqn+c1afPAbLfBVchfBXYhWhIeuYldsTT4Zb9hn/2Mh///et33D1yHN///etAAAA" alt="Mareqsa">
         <div class="logo-tagline">Maquilas y Remolques de Querétaro, S.A. de C.V.</div>
       </div>
       <div class="quote-meta">
