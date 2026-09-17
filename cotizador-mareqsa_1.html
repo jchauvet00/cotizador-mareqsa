@@ -474,24 +474,21 @@ table.ptbl {
 
 .inp-validity:focus { border-color: var(--red); }
 
-/* ─── GLOBAL DISCOUNT SELECT ─── */
+/* ─── GLOBAL DISCOUNT ROW ─── */
 .sel-gdesc {
   display: inline-block;
-  margin-left: 8px;
-  font-size: 10px;
-  padding: 2px 5px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  margin-left: 10px;
+  font-size: 12px;
+  padding: 3px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
   background: var(--surface);
-  color: var(--ink-2);
-  vertical-align: middle;
+  color: var(--ink-1);
   cursor: pointer;
-  font-weight: 600;
-  letter-spacing: .03em;
+  vertical-align: middle;
 }
-.sel-gdesc:focus { outline: none; border-color: var(--red); }
-.sel-gdesc option[value="0"] { color: var(--ink-3); }
-#discountRow .tv { color: var(--red); }
+.sel-gdesc:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 2px rgba(180,0,0,.1); }
+#tDiscount { color: var(--red); }
 .inp-price[readonly] {
   background: var(--surface-2);
   color: var(--ink-1);
@@ -848,9 +845,14 @@ table.ptbl {
     <div class="totals-wrap">
       <div class="totals-box">
         <div class="total-row">
-          <span class="tl">Subtotal
+          <span class="tl">Subtotal</span>
+          <span class="tv" id="tSubtotal">$0.00</span>
+        </div>
+        <div class="total-row">
+          <span class="tl">
+            Descuento
             <select class="sel-gdesc" id="gDiscount" onchange="updateTotals()">
-              <option value="0">DESC</option>
+              <option value="0">Sin descuento</option>
               <option value="1">1%</option>
               <option value="2">2%</option>
               <option value="3">3%</option>
@@ -861,11 +863,7 @@ table.ptbl {
               <option value="8">8%</option>
             </select>
           </span>
-          <span class="tv" id="tSubtotal">$0.00</span>
-        </div>
-        <div class="total-row" id="discountRow" style="display:none">
-          <span class="tl">Descuento</span>
-          <span class="tv" id="tDiscount">-$0.00</span>
+          <span class="tv" id="tDiscount" style="color:var(--red)"></span>
         </div>
         <div class="total-row">
           <span class="tl">IVA (16%)</span>
@@ -1410,19 +1408,12 @@ function render() {
 }
 
 function updateTotals() {
-  const gd2 = document.getElementById('gDiscount');
-  const discPct2 = gd2 ? (parseInt(gd2.value) || 0) : 0;
   const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
   const gd = document.getElementById('gDiscount');
   const discPct = gd ? (parseInt(gd.value) || 0) : 0;
   const discAmt = sub * discPct / 100;
-  const discRow = document.getElementById('discountRow');
-  if (discPct > 0 && discRow) {
-    discRow.style.display = '';
-    document.getElementById('tDiscount').textContent = '-' + fmt(discAmt);
-  } else if (discRow) {
-    discRow.style.display = 'none';
-  }
+  const tDisc = document.getElementById('tDiscount');
+  if (tDisc) tDisc.textContent = discPct > 0 ? '-' + fmt(discAmt) : '';
   const afterDisc = sub - discAmt;
   const iva = afterDisc * 0.16;
   document.getElementById('tSubtotal').textContent = fmt(sub);
