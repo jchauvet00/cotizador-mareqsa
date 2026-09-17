@@ -850,10 +850,6 @@ table.ptbl {
       </table>
     </div>
     <div class="add-row-area">
-      <button class="btn-add" onclick="addRow()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Agregar producto
-      </button>
       <button class="btn-add btn-add-custom" onclick="addCustomRow()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Producto personalizado
@@ -1283,9 +1279,10 @@ function changeCustomName(i, val) { rows[i].customName = val; }
 function changeCustomNotes(i, val) { rows[i].customNotes = val; }
 
 function changeCustomPrice(i, val) {
-  rows[i].price = parseFloat(val.replace(/[^\d.]/g, '')) || 0;
-  rows[i].basePrice = rows[i].price;
-  updateTotals();
+  const p = parseFloat(val.replace(/[^\d.]/g, '')) || 0;
+  rows[i].basePrice = p;
+  rows[i].price = p * (1 - (rows[i].discount || 0) / 100);
+  render();
 }
 
 function changeQty(i, val) {
@@ -1399,7 +1396,7 @@ function render() {
     const mainRow = `
 <tr>
   <td>${isOptional ? `
-    <div class="opt-parent-label">${prod.name}</div>
+    <div class="opt-parent-label">Equipo opcional</div>
     <div class="opt-item-name">${r.customName.toUpperCase()}</div>` : `
     <select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>`}
   </td>
