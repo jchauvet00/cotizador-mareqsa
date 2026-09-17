@@ -88,7 +88,7 @@ body {
 
 .header-dolly {
   width: 100%;
-  height: 200px;
+  height: 300px;
   overflow: hidden;
   position: relative;
   background: #0d0d0d;
@@ -474,6 +474,109 @@ table.ptbl {
 
 .inp-validity:focus { border-color: var(--red); }
 
+/* ─── DISCOUNT SELECT ─── */
+.sel-discount {
+  display: block;
+  margin-top: 4px;
+  width: 120px;
+  font-size: 11px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.sel-discount:focus { outline: none; border-color: var(--red); }
+.inp-price[readonly] {
+  background: var(--surface-2);
+  color: var(--ink-1);
+  cursor: default;
+}
+.inp-price[readonly]:focus { border-color: var(--border); box-shadow: none; background: var(--surface-2); }
+
+/* ─── CUSTOM PRODUCT ROW ─── */
+.inp-custom-name {
+  width: 100%;
+  font-size: 13px;
+  padding: 5px 8px;
+  border: 1.5px dashed var(--red);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink-1);
+  box-sizing: border-box;
+}
+.inp-custom-name::placeholder { color: var(--ink-3); }
+.inp-custom-name:focus { outline: none; border-style: solid; border-color: var(--red); }
+.inp-custom-notes {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  font-size: 11.5px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  resize: vertical;
+  min-height: 42px;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+}
+.inp-custom-notes::placeholder { color: var(--ink-3); font-style: italic; }
+.inp-custom-notes:focus { outline: none; border-color: var(--red); background: var(--surface); }
+.inp-price-custom {
+  border-style: dashed !important;
+  border-color: var(--red) !important;
+  cursor: text !important;
+  background: var(--surface) !important;
+}
+.inp-price-custom:focus { border-style: solid !important; background: var(--surface) !important; box-shadow: 0 0 0 3px rgba(180,0,0,.08); }
+
+/* ─── SELLER BAR ─── */
+.seller-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 24px 10px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.seller-bar label { font-weight: 600; letter-spacing: .02em; white-space: nowrap; }
+.inp-seller {
+  flex: 1;
+  max-width: 280px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink-1);
+}
+.inp-seller:focus { outline: none; border-color: var(--red); }
+
+/* ─── PRODUCT DESCRIPTION ─── */
+.prod-desc {
+  font-size: 12px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  padding: 9px 12px;
+  margin: 0 0 12px;
+  background: var(--surface-2);
+  border-radius: 6px;
+  border-left: 3px solid var(--red);
+}
+
+/* ─── BTN-ADD-CUSTOM ─── */
+.btn-add-custom {
+  border-color: var(--red);
+  color: var(--red);
+}
+.btn-add-custom:hover { background: var(--red); color: #fff; }
+
 /* ─── ACTIONS ─── */
 .actions {
   display: flex;
@@ -528,7 +631,7 @@ table.ptbl {
 /* ─── RESPONSIVE ─── */
 @media (max-width: 560px) {
   .header-top { padding: 16px 18px 14px; }
-  .header-dolly { height: 140px; }
+  .header-dolly { height: 180px; }
   .card-body { padding: 16px 18px; }
   .card-head { padding: 10px 18px; }
   .fgrid { grid-template-columns: 1fr; }
@@ -547,9 +650,9 @@ table.ptbl {
   .page { padding: 0; max-width: 100%; }
   .header { box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
-  .actions, .add-row-area, .btn-rm { display: none !important; }
-  .header-dolly { height: 160px; }
-  .sel-product, .inp-qty, .inp-price, .inp-validity {
+  .actions, .add-row-area, .btn-rm, .sel-discount { display: none !important; }
+  .header-dolly { height: 200px; }
+  .sel-product, .inp-qty, .inp-price, .inp-validity, .inp-seller, .inp-custom-name, .inp-custom-notes {
     border: none; background: transparent; padding: 0;
   }
   .footer { padding-top: 20px; }
@@ -671,6 +774,10 @@ table.ptbl {
         <div class="meta-date" id="quoteDate"></div>
       </div>
     </div>
+    <div class="seller-bar">
+      <label for="cSeller">Asesor comercial:</label>
+      <input type="text" id="cSeller" class="inp-seller" placeholder="Nombre del asesor">
+    </div>
     <div class="header-dolly">
       <img src="https://i0.wp.com/mareqsa.com/wp-content/uploads/2024/03/Dolly_Dos_Ejes.webp?fit=1032%2C774&ssl=1"
            alt="Dolly Mareqsa — Semi-remolque dos ejes">
@@ -729,6 +836,10 @@ table.ptbl {
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Agregar producto
       </button>
+      <button class="btn-add btn-add-custom" onclick="addCustomRow()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Producto personalizado
+      </button>
     </div>
     <div class="totals-wrap">
       <div class="totals-box">
@@ -773,9 +884,13 @@ table.ptbl {
 
   <!-- ACCIONES -->
   <div class="actions">
+    <button class="btn btn-sec" onclick="downloadQuote()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Descargar
+    </button>
     <button class="btn btn-sec" onclick="window.print()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      Imprimir / PDF
+      Imprimir
     </button>
     <button class="btn btn-pri" onclick="sendEmail()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -791,6 +906,39 @@ table.ptbl {
 </div>
 
 <script>
+const PRODUCT_DESCS = [
+  // 0: Dolly Mareqsa
+  "Dolly de dos ejes diseñado para convertir semirremolques de eje simple en configuraciones B-train de mayor capacidad. Fabricado con acero estructural A-36 y soldadura certificada AWS D1.1. Sistema de frenado neumático con válvula de relé integrada, compatible con tractos de todas las marcas. Capacidad nominal 48,000 kg en tándem. Ideal para acarreo de contenedores, carga general y operaciones portuarias.",
+  // 1: Jaula Granelera 35'
+  "Semirremolque caja abierta de 35 pies optimizado para transporte de materiales a granel secos: grano, arena, grava, cal y fertilizantes. Arcos laterales de PTR perfil cuadrado con barrotes cada 60 cm; piso de lámina estriada 3/16″ A-36. Compuerta trasera de palanca de doble acción. Cumple norma SCT-México para pesos y dimensiones en carreteras federales.",
+  // 2: Jaula Granelera 48'
+  "Versión extendida a 48 pies de la jaula granelera, con mayor volumen de carga para operaciones de larga distancia. Marco principal en tubo cuadrado A-36 con esquinas reforzadas y travesaños cada 50 cm. Piso de lámina estriada 3/16″. Preparado para toldo hidráulico opcional. Compuerta trasera de apertura total con palanca de seguridad.",
+  // 3: Plataforma Futura 35'
+  "Plataforma de carga abierta de 35 pies optimizada para maquinaria, vehículos y mercancía paletizada. Bastidor de vigas tipo «I» de acero A-36 con travesaños tubulares cada 45 cm. Piso de madera tropical de 1.5″ o lámina estriada a elección. Cuatro argollas de seguridad laterales. Luces de posición y freno LED integradas.",
+  // 4: Plataforma Futura 48'
+  "Versión de 48 pies de la Plataforma Futura, con mayor longitud para carga extra larga. Vigas tipo «I» reforzadas en los puntos de mayor esfuerzo. Piso de madera tropical 1.5″ o acero estriado. Sistema de aire de suspensión listo para eje retráctil opcional. Faros traseros y laterales con tecnología LED.",
+  // 5: Plataforma Desnivelada 35'
+  "Semirremolque de 35 pies con sección delantera desnivelada (neck) que permite mayor altura libre de carga en la parte media, ideal para maquinaria de construcción y equipo agrícola de gran volumen. Bastidor de vigas tipo «I» reforzadas acero A-36. Transición suave entre niveles con escalón reforzado. Sistema de anclaje de cadena incluido.",
+  // 6: Plataforma Desnivelada 48'
+  "Plataforma desnivelada de 48 pies con zona delantera descendida para acomodar carga de altura superior a la estándar. Mayor área útil en la sección trasera para maquinaria de gran tamaño. Bastidor de acero A-36 con refuerzos en los puntos de apoyo del neck. Incluye cuatro argollas de seguridad tipo D-ring de 25 mm.",
+  // 7: Plataforma High Cube
+  "Plataforma especial para contenedores High Cube de 9.5 pies de altura. Cuatro vigas tipo «I» longitudinales para máxima rigidez torsional. Esquineros de acero fundido ISO 668 para twistlocks estándar. Altura de piso optimizada para mantener el conjunto dentro de los límites legales de altura total en México.",
+  // 8: Plataforma Trailmex 35'
+  "Plataforma de 35 pies con diseño Trailmex orientada a operaciones en caminos rurales y terracería. Bastidor de vigas reforzadas acero A-36 con refuerzos adicionales en los 30 cm delanteros y traseros. Piso de madera tropical 1.5″ con travesaños de tubo estructural. Pintura anticorrosiva de dos capas; acabado esmalte color estándar Mareqsa.",
+  // 9: Plataforma Trailmex 48'
+  "Versión de 48 pies de la Plataforma Trailmex, con estructura reforzada para rutas de larga distancia. Vigas longitudinales tipo «I» con mayor sección en la zona central para neutralizar flambeado. Piso de madera tropical 1.5″ tratada con aceite penetrante. Sistema de iluminación trasera certificado NOM-001-SCT-2-2016.",
+  // 10: Tolvas Graneleras 50m³
+  "Tolva granelera de 50 m³ con sistema de doble compuerta inferior de apertura lateral para descarga rápida y controlada. Cuerpo fabricado en acero A-36 con recubrimiento anticorrosivo interior en dos capas. Ángulos de descarga optimizados para granos de alta densidad y materiales pulverizados. Capacidad de carga hasta 48,000 kg en configuración tándem.",
+  // 11: Volteo 30m³
+  "Volteo de 30 m³ con caja fabricada en acero A-36, esquinas internas reforzadas con perfil angular de 3/8″. Cilindro telescópico de 3 etapas marca Parker con presión de trabajo de 3,500 PSI. Sistema hidráulico listo para conectar a la toma de fuerza del tracto (PTO). Ángulo de descarga de 50°. Puerta trasera con bisagras reforzadas y seguro de ruta.",
+  // 12: Volteo 40m³
+  "Volteo de 40 m³ para operaciones de minería, construcción y relleno. Acero A-36 con costillas verticales de refuerzo cada 80 cm. Cilindro Parker de 4 etapas; tiempo de levante 30–45 s. Piso de 1/4″ para mayor resistencia al desgaste. Compatible con tractos 6×4 y 8×4. Defensa trasera desmontable para maniobra de compactadora.",
+  // 13: Volteo 50m³
+  "Volteo de máxima capacidad estándar de 50 m³, diseñado para alta productividad en minería y movimiento de tierras. Caja de acero A-36 con recubrimiento interior Hardox 400 en piso y paredes laterales inferiores. Cilindro telescópico Parker de 5 etapas. Sistema eléctrico 12V con indicadores de nivel de aceite hidráulico.",
+  // 14: Volteo Acero Inoxidable
+  "Volteo especial con caja íntegramente fabricada en acero inoxidable 304 calibre 12, para transporte de alimentos a granel, químicos no agresivos y materiales de alta higiene. Cilindro telescópico de doble acción con sello hidráulico de Viton. Interior liso sin ángulos muertos para fácil limpieza y certificación sanitaria."
+];
+
 const PRODUCTS = [
   {
     name: "Dolly Mareqsa",
@@ -1078,8 +1226,18 @@ function productOptions(selected) {
 }
 
 function addRow(idx = 0) {
-  rows.push({ idx, qty: 1, price: PRODUCTS[idx].price, showSpecs: true });
+  const bp = PRODUCTS[idx].price;
+  rows.push({ idx, qty: 1, price: bp, basePrice: bp, discount: 0, showSpecs: true });
   render();
+}
+
+function addCustomRow() {
+  rows.push({ isCustomProduct: true, customName: '', customNotes: '', idx: 0, qty: 1, price: 0, basePrice: 0, discount: 0, showSpecs: false });
+  render();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.inp-custom-name');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 50);
 }
 
 function removeRow(i) {
@@ -1090,8 +1248,25 @@ function removeRow(i) {
 function changeProduct(i, val) {
   rows[i].idx = +val;
   rows[i].price = PRODUCTS[+val].price;
+  rows[i].basePrice = PRODUCTS[+val].price;
+  rows[i].discount = 0;
   rows[i].showSpecs = true;
   render();
+}
+
+function changeDiscount(i, val) {
+  rows[i].discount = +val;
+  rows[i].price = rows[i].basePrice * (1 - +val / 100);
+  render();
+}
+
+function changeCustomName(i, val) { rows[i].customName = val; }
+function changeCustomNotes(i, val) { rows[i].customNotes = val; }
+
+function changeCustomPrice(i, val) {
+  rows[i].price = parseFloat(val.replace(/[^\d.]/g, '')) || 0;
+  rows[i].basePrice = rows[i].price;
+  updateTotals();
 }
 
 function changeQty(i, val) {
@@ -1112,13 +1287,15 @@ function toggleSpecs(i) {
 function addOptional(rowIdx, optIdx) {
   const prod = PRODUCTS[rows[rowIdx].idx];
   const opt = prod.optionals[optIdx];
-  rows.push({ idx: rows[rowIdx].idx, qty: 1, price: opt.price, customName: opt.name, showSpecs: false });
+  rows.push({ idx: rows[rowIdx].idx, qty: 1, price: opt.price, basePrice: opt.price, discount: 0, customName: opt.name, showSpecs: false });
   render();
 }
 
 function renderDetailPanel(i) {
   const prod = PRODUCTS[rows[i].idx];
+  const pidx = rows[i].idx;
   const showSpecs = rows[i].showSpecs;
+  const desc = (PRODUCT_DESCS && PRODUCT_DESCS[pidx]) ? PRODUCT_DESCS[pidx] : '';
   const specsHtml = prod.specs.map(([k,v]) =>
     `<span class="spec-key">${k}</span><span class="spec-val">${v}</span>`
   ).join('');
@@ -1134,6 +1311,7 @@ function renderDetailPanel(i) {
   <td colspan="5">
     <div class="detail-panel">
       <div>
+        ${desc ? `<p class="prod-desc">${desc}</p>` : ''}
         <button class="specs-toggle" onclick="toggleSpecs(${i})">
           ${showSpecs ? '▾' : '▸'} Especificaciones técnicas
         </button>
@@ -1151,6 +1329,12 @@ function renderDetailPanel(i) {
 </tr>`;
 }
 
+function discountOpts(d) {
+  return [0,1,2,3,4,5,6,7,8].map(v =>
+    `<option value="${v}"${(d||0)===v?' selected':''}>${v===0?'Sin descuento':v+'% descuento'}</option>`
+  ).join('');
+}
+
 function render() {
   const tbody = document.getElementById('ptbody');
   if (rows.length === 0) {
@@ -1159,20 +1343,47 @@ function render() {
     return;
   }
   tbody.innerHTML = rows.map((r, i) => {
-    const prod = PRODUCTS[r.idx];
-    const name = r.customName || prod.name;
     const total = r.qty * r.price;
+
+    if (r.isCustomProduct) {
+      const safeName = (r.customName||'').replace(/"/g,'&quot;');
+      return `
+<tr class="custom-product-row">
+  <td>
+    <input type="text" class="inp-custom-name" value="${safeName}"
+           placeholder="Nombre del producto o servicio"
+           oninput="changeCustomName(${i},this.value)">
+    <textarea class="inp-custom-notes"
+              placeholder="Notas, descripción, condiciones especiales…"
+              oninput="changeCustomNotes(${i},this.value)">${r.customNotes||''}</textarea>
+  </td>
+  <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
+  <td style="text-align:right">
+    <input type="text" class="inp-price inp-price-custom"
+           value="${r.price > 0 ? r.price.toLocaleString('es-MX') : ''}"
+           placeholder="0.00"
+           onblur="changeCustomPrice(${i},this.value)">
+  </td>
+  <td class="row-total">${fmt(total)}</td>
+  <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
+</tr>`;
+    }
+
+    // Regular or optional row
+    const prod = PRODUCTS[r.idx];
     const mainRow = `
 <tr>
   <td><select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>
       ${r.customName ? `<div style="font-size:11px;color:var(--ink-3);margin-top:3px;padding-left:2px">↳ ${r.customName}</div>` : ''}
   </td>
   <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
-  <td style="text-align:right"><input type="text" class="inp-price" value="${r.price.toLocaleString('es-MX')}" onblur="changePrice(${i},this.value)"></td>
+  <td style="text-align:right">
+    <input type="text" class="inp-price" value="${fmt(r.price)}" readonly tabindex="-1">
+    <select class="sel-discount" onchange="changeDiscount(${i},this.value)">${discountOpts(r.discount)}</select>
+  </td>
   <td class="row-total">${fmt(total)}</td>
   <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
 </tr>`;
-    // Only show detail panel for non-optional rows (no customName)
     const detailRow = !r.customName ? renderDetailPanel(i) : '';
     return mainRow + detailRow;
   }).join('');
@@ -1185,6 +1396,10 @@ function updateTotals() {
   document.getElementById('tSubtotal').textContent = fmt(sub);
   document.getElementById('tIva').textContent = fmt(iva);
   document.getElementById('tGrand').textContent = fmt(sub + iva);
+}
+
+function downloadQuote() {
+  window.print();
 }
 
 function sendEmail() {
@@ -1210,6 +1425,8 @@ function sendEmail() {
 
   let body = `COTIZACIÓN MAREQSA\n${num} · ${date}\n`;
   body += `\nCLIENTE: ${name || '—'}`;
+  const seller = document.getElementById('cSeller') ? document.getElementById('cSeller').value.trim() : '';
+  if (seller) body += `\nASESOR: ${seller}`;
   if (contact) body += `\nCONTACTO: ${contact}`;
   if (phone) body += `\nTELÉFONO: ${phone}`;
   body += `\n\nPRODUCTOS:\n${'─'.repeat(44)}\n`;
