@@ -476,16 +476,16 @@ table.ptbl {
 
 /* ─── GLOBAL DISCOUNT ROW ─── */
 .sel-row-disc {
-  display: block;
-  margin-top: 5px;
-  font-size: 11px;
-  padding: 2px 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  padding: 4px 6px;
   border: 1.5px solid var(--border);
   border-radius: 5px;
   background: var(--surface);
   color: var(--ink-2);
   cursor: pointer;
   width: 100%;
+  max-width: 110px;
 }
 .sel-row-disc:focus { outline: none; border-color: var(--red); }
 .sel-row-disc.has-disc { border-color: var(--red); color: var(--red); font-weight: 600; }
@@ -822,10 +822,11 @@ table.ptbl {
       <table class="ptbl">
         <thead>
           <tr>
-            <th style="width:40%">Producto / Modelo</th>
-            <th class="c" style="width:10%">Cant.</th>
-            <th class="r" style="width:22%">Precio Unit. (MXN)</th>
-            <th class="r" style="width:20%">Total</th>
+            <th style="width:36%">Producto / Modelo</th>
+            <th class="c" style="width:8%">Cant.</th>
+            <th class="r" style="width:18%">Precio Unit. (MXN)</th>
+            <th class="c" style="width:12%">Desc.</th>
+            <th class="r" style="width:18%">Total</th>
             <th style="width:8%"></th>
           </tr>
         </thead>
@@ -1310,7 +1311,7 @@ function renderDetailPanel(i) {
   ).join('');
   return `
 <tr class="detail-row">
-  <td colspan="5">
+  <td colspan="6">
     <div class="detail-panel">
       <div>
         ${desc ? `<p class="prod-desc">${desc}</p>` : ''}
@@ -1340,7 +1341,7 @@ function discountOpts(d) {
 function render() {
   const tbody = document.getElementById('ptbody');
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr class="empty"><td colspan="5">Agrega productos con el botón de abajo</td></tr>`;
+    tbody.innerHTML = `<tr class="empty"><td colspan="6">Agrega productos con el botón de abajo</td></tr>`;
     updateTotals();
     return;
   }
@@ -1365,6 +1366,8 @@ function render() {
            value="${r.basePrice > 0 ? r.basePrice.toLocaleString('es-MX') : ''}"
            placeholder="0.00"
            onblur="changeCustomPrice(${i},this.value)">
+  </td>
+  <td style="text-align:center">
     <select class="sel-row-disc${r.discount>0?' has-disc':''}" onchange="changeDiscount(${i},this.value)">
       ${discountOpts(r.discount)}
     </select>
@@ -1384,6 +1387,8 @@ function render() {
   <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
   <td style="text-align:right">
     <input type="text" class="inp-price" value="${fmt(r.price)}" readonly tabindex="-1">
+  </td>
+  <td style="text-align:center">
     <select class="sel-row-disc${r.discount>0?' has-disc':''}" onchange="changeDiscount(${i},this.value)">
       ${discountOpts(r.discount)}
     </select>
