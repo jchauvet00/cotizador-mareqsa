@@ -757,6 +757,22 @@ table.ptbl {
 }
 .specs-toggle:hover { color: var(--red); }
 .specs-collapsed { display: none; }
+
+/* ─── OPTIONAL ROWS ─── */
+.opt-parent-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 3px;
+}
+.opt-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.03em;
+}
 </style>
 
 <div class="page">
@@ -1379,10 +1395,13 @@ function render() {
 
     // Regular or optional row
     const prod = PRODUCTS[r.idx];
+    const isOptional = !!r.customName;
     const mainRow = `
 <tr>
-  <td><select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>
-      ${r.customName ? `<div style="font-size:11px;color:var(--ink-3);margin-top:3px;padding-left:2px">↳ ${r.customName}</div>` : ''}
+  <td>${isOptional ? `
+    <div class="opt-parent-label">${prod.name}</div>
+    <div class="opt-item-name">${r.customName.toUpperCase()}</div>` : `
+    <select class="sel-product" onchange="changeProduct(${i},this.value)">${productOptions(r.idx)}</select>`}
   </td>
   <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
   <td style="text-align:right">
@@ -1396,7 +1415,7 @@ function render() {
   <td class="row-total">${fmt(total)}</td>
   <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
 </tr>`;
-    const detailRow = !r.customName ? renderDetailPanel(i) : '';
+    const detailRow = !isOptional ? renderDetailPanel(i) : '';
     return mainRow + detailRow;
   }).join('');
   updateTotals();
