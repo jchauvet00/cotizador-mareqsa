@@ -474,20 +474,24 @@ table.ptbl {
 
 .inp-validity:focus { border-color: var(--red); }
 
-/* ─── DISCOUNT SELECT ─── */
-.sel-discount {
-  display: block;
-  margin-top: 4px;
-  width: 120px;
-  font-size: 11px;
-  padding: 3px 6px;
+/* ─── GLOBAL DISCOUNT SELECT ─── */
+.sel-gdesc {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 10px;
+  padding: 2px 5px;
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--surface);
   color: var(--ink-2);
+  vertical-align: middle;
   cursor: pointer;
+  font-weight: 600;
+  letter-spacing: .03em;
 }
-.sel-discount:focus { outline: none; border-color: var(--red); }
+.sel-gdesc:focus { outline: none; border-color: var(--red); }
+.sel-gdesc option[value="0"] { color: var(--ink-3); }
+#discountRow .tv { color: var(--red); }
 .inp-price[readonly] {
   background: var(--surface-2);
   color: var(--ink-1);
@@ -650,7 +654,7 @@ table.ptbl {
   .page { padding: 0; max-width: 100%; }
   .header { box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
-  .actions, .add-row-area, .btn-rm, .sel-discount { display: none !important; }
+  .actions, .add-row-area, .btn-rm, .sel-gdesc { display: none !important; }
   .header-dolly { height: 200px; }
   .sel-product, .inp-qty, .inp-price, .inp-validity, .inp-seller, .inp-custom-name, .inp-custom-notes {
     border: none; background: transparent; padding: 0;
@@ -844,8 +848,24 @@ table.ptbl {
     <div class="totals-wrap">
       <div class="totals-box">
         <div class="total-row">
-          <span class="tl">Subtotal</span>
+          <span class="tl">Subtotal
+            <select class="sel-gdesc" id="gDiscount" onchange="updateTotals()">
+              <option value="0">DESC</option>
+              <option value="1">1%</option>
+              <option value="2">2%</option>
+              <option value="3">3%</option>
+              <option value="4">4%</option>
+              <option value="5">5%</option>
+              <option value="6">6%</option>
+              <option value="7">7%</option>
+              <option value="8">8%</option>
+            </select>
+          </span>
           <span class="tv" id="tSubtotal">$0.00</span>
+        </div>
+        <div class="total-row" id="discountRow" style="display:none">
+          <span class="tl">Descuento</span>
+          <span class="tv" id="tDiscount">-$0.00</span>
         </div>
         <div class="total-row">
           <span class="tl">IVA (16%)</span>
@@ -1379,7 +1399,6 @@ function render() {
   <td style="text-align:center"><input type="number" class="inp-qty" value="${r.qty}" min="1" oninput="changeQty(${i},this.value)"></td>
   <td style="text-align:right">
     <input type="text" class="inp-price" value="${fmt(r.price)}" readonly tabindex="-1">
-    <select class="sel-discount" onchange="changeDiscount(${i},this.value)">${discountOpts(r.discount)}</select>
   </td>
   <td class="row-total">${fmt(total)}</td>
   <td style="text-align:center"><button class="btn-rm" onclick="removeRow(${i})" title="Eliminar">×</button></td>
@@ -1391,11 +1410,24 @@ function render() {
 }
 
 function updateTotals() {
+  const gd2 = document.getElementById('gDiscount');
+  const discPct2 = gd2 ? (parseInt(gd2.value) || 0) : 0;
   const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
-  const iva = sub * 0.16;
+  const gd = document.getElementById('gDiscount');
+  const discPct = gd ? (parseInt(gd.value) || 0) : 0;
+  const discAmt = sub * discPct / 100;
+  const discRow = document.getElementById('discountRow');
+  if (discPct > 0 && discRow) {
+    discRow.style.display = '';
+    document.getElementById('tDiscount').textContent = '-' + fmt(discAmt);
+  } else if (discRow) {
+    discRow.style.display = 'none';
+  }
+  const afterDisc = sub - discAmt;
+  const iva = afterDisc * 0.16;
   document.getElementById('tSubtotal').textContent = fmt(sub);
   document.getElementById('tIva').textContent = fmt(iva);
-  document.getElementById('tGrand').textContent = fmt(sub + iva);
+  document.getElementById('tGrand').textContent = fmt(afterDisc + iva);
 }
 
 function downloadQuote() {
@@ -1419,9 +1451,13 @@ function sendEmail() {
     return;
   }
 
+  const gd2 = document.getElementById('gDiscount');
+  const discPct2 = gd2 ? (parseInt(gd2.value) || 0) : 0;
   const sub = rows.reduce((s, r) => s + r.qty * r.price, 0);
-  const iva = sub * 0.16;
-  const grand = sub + iva;
+  const discAmt2 = sub * discPct2 / 100;
+  const afterDisc2 = sub - discAmt2;
+  const iva = afterDisc2 * 0.16;
+  const grand = afterDisc2 + iva;
 
   let body = `COTIZACIÓN MAREQSA\n${num} · ${date}\n`;
   body += `\nCLIENTE: ${name || '—'}`;
@@ -1435,7 +1471,9 @@ function sendEmail() {
     body += `${label}\n  ${r.qty} u × ${fmt(r.price)} = ${fmt(r.qty * r.price)}\n`;
   });
   body += `${'─'.repeat(44)}\n`;
-  body += `Subtotal:    ${fmt(sub)}\nIVA (16%):   ${fmt(iva)}\nTOTAL:       ${fmt(grand)}\n`;
+  if (discPct2 > 0) body += `Subtotal:    ${fmt(sub)}\nDescuento (${discPct2}%): -${fmt(discAmt2)}\n`;
+  else body += `Subtotal:    ${fmt(sub)}\n`;
+  body += `IVA (16%):   ${fmt(iva)}\nTOTAL:       ${fmt(grand)}\n`;
   body += `\nVigencia: ${validity} días\n`;
   if (notes) body += `\nNOTAS:\n${notes}\n`;
   body += `\nMaquilas y Remolques de Querétaro, S.A. de C.V.\nwww.mareqsa.com · Tel. 442-217-00-01`;
